@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Our game</title>
+    <script src="http://code.createjs.com/createjs-2013.09.25.min.js"></script>
+
+    <script>
+        var stage;
+        var queue;
+
+        function init() {
+            stage = new createjs.Stage("myCanvas");
+
+            queue = new createjs.LoadQueue();
+            queue.installPlugin(createjs.Sound);
+            queue.addEventListener("complete", loadStuff);
+            queue.loadManifest([{id: "daisy", src:"assets/daisy-clip-art-18.jpg"}, {id: "sound", src: "assets/pop.mp3"}]);
+        }
+
+        function loadStuff(event) {
+            var ball = new createjs.Shape();
+            ball.graphics.beginFill("#AAAAAA").drawCircle(0,0,50);
+            ball.x = 50;
+            ball.y = 200;
+
+            ball.addEventListener("click", handleClick);
+
+
+            createjs.Tween.get(ball, {loop: true}).to({x:450}, 3000).to({x:50}, 3000).to({x:300, y:600}, 4000);
+            createjs.Ticker.addEventListener("tick", tick);
+
+            stage.addChild(ball);
+        }
+
+        function handleClick(event) {
+            var bmp = new createjs.Bitmap(queue.getResult("daisy"));
+            bmp.x = Math.random() * 500;
+            bmp.y = Math.random() * 500;
+
+            stage.addChild(bmp);
+
+            createjs.Sound.play("sound");
+        }
+
+        function tick(event) {
+            stage.update();
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    <canvas id="myCanvas" width="500" height="500">
+        This is a canvas. You can't see it.
+    </canvas>
+</body>
+</html>
